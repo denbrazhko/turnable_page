@@ -30,6 +30,7 @@ class RenderTurnableBook extends RenderBox
   static const int _swipeTimeout = 250;
   static const double _minMoveThreshold = 10.0;
   bool get _needsWhitePage {
+    if (settings.usePortrait) return false;
     return settings.showCover ? false : childCount % 2 == 1;
   }
 
@@ -451,6 +452,17 @@ class RenderTurnableBook extends RenderBox
     final rect = getRect();
     final canvas = context.canvas;
     canvas.save();
+    // Background fill to avoid transparent flashes/flicker when switching spreads
+    // Especially noticeable when returning to the first spread or showing a white trailing page.
+    canvas.drawRect(
+      Rect.fromLTWH(
+        rect.left + offset.dx,
+        rect.top + offset.dy,
+        rect.width,
+        rect.height,
+      ),
+      Paint()..color = const ui.Color(0xFFFFFFFF),
+    );
     void paintStatic(BookPage? page, bool isLeft) {
       if (page == null) return;
       final lp = page as BookPageImpl;
@@ -467,7 +479,10 @@ class RenderTurnableBook extends RenderBox
       context.paintChild(child, pageOffset);
     }
 
-    if (_orientation != BookOrientation.portrait) paintStatic(leftPage, true);
+    if (_orientation != BookOrientation.portrait) {
+      paintStatic(leftPage, true);
+    }
+    // Always paint static right page so front content remains visible under flipping layer.
     paintStatic(rightPage, false);
     if (bottomPage is BookPageImpl) {
       _paintDynamicPage(
@@ -529,6 +544,19 @@ class RenderTurnableBook extends RenderBox
     final angle = page.state.angle;
     if (angle.abs() > 0.001) {
       canvas.rotate(angle);
+    }
+    // Fill background to avoid flicker caused by transparent widgets revealing previous frame
+    try {
+      final rect = getRect();
+      final bgPaint = Paint()
+        ..color = const Color(0xFFFFFFFF)
+        ..style = PaintingStyle.fill;
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, rect.pageWidth, rect.height),
+        bgPaint,
+      );
+    } catch (_) {
+      // Safe fail: background fill is an optimization
     }
     context.paintChild(child, Offset.zero);
     canvas.restore();
@@ -751,8 +779,6 @@ class RenderTurnableBook extends RenderBox
 
   @override
   void handleEvent(PointerEvent event, HitTestEntry entry) {
-    if (settings.clickEventForward) return;
-    
     if (event is PointerDownEvent) {
       _handlePointerDown(event.localPosition);
     } else if (event is PointerMoveEvent) {
@@ -833,7 +859,7 @@ class RenderTurnableBook extends RenderBox
     }
     
     // Process page flip gesture
-    if (_touchPoint != null && _isValidSwipe(point)) {
+  if (_touchPoint != null && _isValidSwipe(point)) {
       _processSwipeGesture(point);
       _touchPoint = null;
     } else {

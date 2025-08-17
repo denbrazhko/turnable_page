@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.0.0 - 2025-08-16
+## 1.0.0 - 2025-08-17
 ### 🔄 MAJOR ARCHITECTURE OVERHAUL
 **BREAKING CHANGES:**
 - **Complete migration from CustomPainter to Flutter RenderBox system**
@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### ✨ New Features
 - **Smart Gesture Detection**: Automatic differentiation between drag (page flip) and tap (widget interaction)
+- **TurnablePdf Widget**: Built‑in PDF page flip viewer (asset / network / file) with single & double page modes, shimmer loading, custom loading/error builders, spine effect, and interactive page rendering
 - **Interactive Widgets**: Buttons and other widgets within pages now work natively without any conversion
 - **Enhanced Physics**: Added inertia, easing, and realistic page bending animations
 - **Improved Performance**: Eliminated expensive widget-to-image conversion pipeline
@@ -47,4 +48,4 @@ All notable changes to this project will be documented in this file.
 
 ## 0.0.1 - 2025-08-09
 - Initial release of Turnable Page package.
-- Core page-flip widget, controller, settings, and example app.
+- Core page-

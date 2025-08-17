@@ -13,10 +13,10 @@ class TurnablePage extends StatelessWidget {
   final TurnablePageCallback? onPageChanged;
   final FlipSettings settings;
   final PageViewMode pageViewMode;
-  final double pixelRatio;
   final bool autoResponseSize;
   final PaperBoundaryDecoration paperBoundaryDecoration;
   final double? aspectRatio;
+  final bool pagesBoundaryIsEnabled;
 
   TurnablePage({
     super.key,
@@ -26,10 +26,10 @@ class TurnablePage extends StatelessWidget {
     required this.pageCount,
     this.onPageChanged,
     this.pageViewMode = PageViewMode.single,
-    this.pixelRatio = 3.0,
     this.autoResponseSize = true,
     this.paperBoundaryDecoration = PaperBoundaryDecoration.vintage,
     FlipSettings? settings,
+    this.pagesBoundaryIsEnabled = true,
   }) : settings = settings ?? FlipSettings() {
     if (settings != null) {
       assert(
@@ -91,15 +91,16 @@ class TurnablePage extends StatelessWidget {
           width: bookSize.width,
           height: bookSize.height,
         );
+        
         return TurnablePageView(
           builder: (context, index) => builder(context, index, constraints),
           bookSize: bookSize,
           settings: adjustedSettings,
           pageCount: pageCount,
-          pixelRatio: pixelRatio,
           controller: controller,
           aspectRatio: aspectRatio,
           onPageChanged: onPageChanged,
+          pagesBoundaryIsEnabled: pagesBoundaryIsEnabled,
           paperBoundaryDecoration: paperBoundaryDecoration,
         );
       },

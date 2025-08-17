@@ -50,9 +50,7 @@ class FlipProcess {
   ///
   /// @param globalPos - Touch Point Coordinates (relative window)
   void flip(Point globalPos) {
-    if (app.getSettings.disableFlipByClick && !isPointOnCorners(globalPos)) {
-      return;
-    }
+  // Allow tap-based flips from both top and bottom regions (previous corner restriction removed)
 
     // the flipping process is already running
     if (calc != null) render.finishAnimation();
@@ -232,6 +230,17 @@ class FlipProcess {
     final y = calc!.getCorner() == FlipCorner.bottom ? rect.height : 0;
 
     final progress = calc!.getFlippingProgress() / 100.0;
+
+    // If user holds near bottom and releases with small horizontal movement but high progress,
+    // force completion to avoid page freezing visually at bottom corner.
+    if (progress > 0.35 && calc!.getCorner() == FlipCorner.bottom) {
+      animateFlippingTo(
+        pos,
+        Point(-rect.pageWidth.toDouble(), y.toDouble()),
+        true,
+      );
+      return;
+    }
 
     if (progress > 0.5) {
       animateFlippingTo(

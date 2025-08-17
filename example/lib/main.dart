@@ -146,7 +146,6 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
           pageViewMode: PageViewMode.single,
           paperBoundaryDecoration: PaperBoundaryDecoration.modern,
           settings: FlipSettings(
-            enableSmartGestures: true,
             drawShadow: true,
             flippingTime: 800,
             swipeDistance: 60.0,

@@ -32,11 +32,8 @@ class FlipSettings {
   /// Enable touch scrolling support on mobile devices
   final bool mobileScrollSupport;
 
-  /// Whether click events should propagate to parent widgets
-  final bool clickEventForward;
-
-  /// Enable mouse events (hover effects, etc.)
-  // final bool useMouseEvents;
+  // Removed legacy gesture flags (clickEventForward, enableSmartGestures, disableFlipByClick)
+  // to simplify API. Click-to-flip now always requires corner (see FlipProcess.flip).
 
   /// Minimum distance in pixels for a swipe gesture to register
   final double swipeDistance;
@@ -44,11 +41,7 @@ class FlipSettings {
   /// Show interactive corner highlighting when hovering near page corners
   final bool showPageCorners;
 
-  /// Disable page flipping when clicking on the page (only allow drag gestures)
-  final bool disableFlipByClick;
-
-  /// Enable smart gesture detection - prevents page flips when children consume gestures
-  final bool enableSmartGestures;
+  // (Removed) disableFlipByClick, enableSmartGestures
 
   /// Size of the corner trigger areas as a fraction of the page diagonal (0.1 = 10% of diagonal)
   final double cornerTriggerAreaSize;
@@ -103,11 +96,7 @@ class FlipSettings {
     /// Enable mobile scroll support. Default: true
     this.mobileScrollSupport = true,
 
-    /// Forward click events to parent. Default: false
-    this.clickEventForward = false,
-
-    /// Enable mouse hover effects. Default: true
-    // this.useMouseEvents = false,
+  // Legacy flags removed
 
     /// Swipe distance threshold in pixels. Default: 100px
     this.swipeDistance = 100.0,
@@ -115,11 +104,7 @@ class FlipSettings {
     /// Show corner highlights on hover. Default: true
     this.showPageCorners = true,
 
-    /// Disable click-to-flip (drag only). Default: false
-    this.disableFlipByClick = false,
-
-    /// Enable smart gesture detection. Default: true (automatic behavior)
-    this.enableSmartGestures = true,
+  // Legacy flags removed
 
     /// Corner trigger area size as fraction of diagonal. Default: 0.2 (20%)
     this.cornerTriggerAreaSize = 0.2,
@@ -144,12 +129,10 @@ class FlipSettings {
     double? maxShadowOpacity,
     bool? showCover,
     bool? mobileScrollSupport,
-    bool? clickEventForward,
-    bool? useMouseEvents,
+  // Legacy parameters removed
     double? swipeDistance,
     bool? showPageCorners,
-    bool? disableFlipByClick,
-    bool? enableSmartGestures,
+  // Legacy parameters removed
     double? cornerTriggerAreaSize,
     bool? enableEasing,
     bool? enableInertia,
@@ -169,12 +152,10 @@ class FlipSettings {
       maxShadowOpacity: maxShadowOpacity ?? this.maxShadowOpacity,
       showCover: showCover ?? this.showCover,
       mobileScrollSupport: mobileScrollSupport ?? this.mobileScrollSupport,
-      clickEventForward: clickEventForward ?? this.clickEventForward,
-      // useMouseEvents: useMouseEvents ?? this.useMouseEvents,
+  // Legacy fields omitted
       swipeDistance: swipeDistance ?? this.swipeDistance,
       showPageCorners: showPageCorners ?? this.showPageCorners,
-      disableFlipByClick: disableFlipByClick ?? this.disableFlipByClick,
-      enableSmartGestures: enableSmartGestures ?? this.enableSmartGestures,
+  // Legacy fields omitted
       cornerTriggerAreaSize: cornerTriggerAreaSize ?? this.cornerTriggerAreaSize,
       enableEasing: enableEasing ?? this.enableEasing,
       enableInertia: enableInertia ?? this.enableInertia,

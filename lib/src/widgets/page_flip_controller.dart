@@ -80,4 +80,9 @@ class PageFlipController {
   /// Use this only when you need direct access to PageFlip methods
   /// not exposed through this controller
   PageFlip? get pageFlipInstance => _pageFlip;
+
+
+ 
+
+  
 }

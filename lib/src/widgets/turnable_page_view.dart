@@ -15,9 +15,9 @@ class TurnablePageView extends StatefulWidget {
   final TurnablePageCallback? onPageChanged;
   final FlipSettings settings;
   final double aspectRatio;
-  final double pixelRatio;
   final Size bookSize;
   final PaperBoundaryDecoration paperBoundaryDecoration;
+  final bool pagesBoundaryIsEnabled;
 
   const TurnablePageView({
     super.key,
@@ -26,10 +26,9 @@ class TurnablePageView extends StatefulWidget {
     required this.builder,
     required this.pageCount,
     required this.aspectRatio,
-    required this.pixelRatio,
     required this.bookSize,
     required this.settings,
-    required this.paperBoundaryDecoration,
+    required this.paperBoundaryDecoration,  this.pagesBoundaryIsEnabled = true,
   });
 
   @override
@@ -79,6 +78,7 @@ class _TurnablePageViewState extends State<TurnablePageView> {
       size: widget.bookSize,
       isSinglePage: widget.settings.usePortrait,
       paperBoundaryDecoration: widget.paperBoundaryDecoration,
+      isEnabled: widget.pagesBoundaryIsEnabled,
       child: TurnableBookRenderObjectWidget(
         pageCount: widget.pageCount,
         builder: (ctx, index) => widget.builder(ctx, index),

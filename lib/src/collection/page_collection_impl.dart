@@ -105,9 +105,13 @@ class PageCollectionImpl extends PageCollection {
   BookPage? getFlippingPage(FlipDirection direction) {
     final current = currentSpreadIndex;
     if (render.getOrientation() == BookOrientation.portrait) {
-      return direction == FlipDirection.forward
-          ? pages[current].getTemporaryCopy()
-          : pages[current - 1];
+      if (direction == FlipDirection.forward) {
+        // Use detached temporary copy so original static page stays intact
+        final original = pages[current] as BookPageImpl;
+        return original.createDetachedCopy();
+      } else {
+        return pages[current - 1];
+      }
     } else {
       final spread = direction == FlipDirection.forward
           ? getSpread()[current + 1]

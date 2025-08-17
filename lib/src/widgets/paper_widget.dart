@@ -9,6 +9,7 @@ class PaperWidget extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final PaperBoundaryDecoration paperBoundaryDecoration;
   final bool isSinglePage;
+  final bool isEnabled;
 
   const PaperWidget({
     super.key,
@@ -22,10 +23,15 @@ class PaperWidget extends StatelessWidget {
     ),
     this.paperBoundaryDecoration = const PaperBoundaryDecoration(),
     this.isSinglePage = false,
+    this.isEnabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (!isEnabled) {
+      return child;
+    }
+
     final effectivePadding = EdgeInsetsDirectional.only(
       start: isSinglePage
           ? 0.0
@@ -36,8 +42,8 @@ class PaperWidget extends StatelessWidget {
     );
 
     return Container(
-      width: size.width,
-      height: size.height,
+      width: size.width + effectivePadding.horizontal * 3,
+      height: size.height + effectivePadding.vertical * 3,
       padding: effectivePadding,
       decoration: _buildOuterDecoration(),
       child: Container(

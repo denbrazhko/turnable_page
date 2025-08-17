@@ -95,4 +95,11 @@ class BookPageImpl extends BookPage {
 
   @override
   BookPage getTemporaryCopy() => this;
+  // Create a lightweight temporary copy with independent state to avoid shared
+  // mutation artifacts during flipping (prevents flicker from double painting).
+  BookPage createDetachedCopy() {
+    final copy = BookPageImpl(index: index, createdDensity: createdDensity)
+      ..orientation = orientation;
+    return copy;
+  }
 }
