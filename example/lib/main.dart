@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:turnable_page/turnable_page.dart';
 
@@ -18,18 +18,22 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AnimationTestPage(),
+      home: _AnimationTestPage(),
     );
   }
 }
-class AnimationTestPage extends StatefulWidget {
+
+class _AnimationTestPage extends StatefulWidget {
+  const _AnimationTestPage();
+
   @override
   _AnimationTestPageState createState() => _AnimationTestPageState();
 }
 
-class _AnimationTestPageState extends State<AnimationTestPage> {
+class _AnimationTestPageState extends State<_AnimationTestPage> {
   late PageFlipController _controller;
-  int _pageCount = 8;
+  Timer? _timer;
+  final List<String> _displayItemsFromMockApi = [];
 
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
   final ValueNotifier<int> _flipCountNotifier = ValueNotifier<int>(0);
@@ -38,13 +42,49 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
   void initState() {
     super.initState();
     _controller = PageFlipController();
+    _timer = Timer(Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _displayItemsFromMockApi.addAll([
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+          ]);
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _currentPageNotifier.dispose();
     _flipCountNotifier.dispose();
+    if (_timer?.isActive == true) {
+      _timer?.cancel();
+    }
     super.dispose();
+  }
+
+  Widget _buildLoadingPage() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(color: Colors.pinkAccent),
+          SizedBox(height: 20),
+          Text(
+            "تحميل بيانات واجهة برمجة التطبيقات الوهمية",
+            style: TextStyle(color: Colors.pinkAccent),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTestPage(int index, BoxConstraints constraints) {
@@ -69,7 +109,7 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
                 Icon(Icons.auto_stories, size: 80, color: Colors.white),
                 SizedBox(height: 20),
                 Text(
-                  'صفحة ${index + 1}',
+                  'صفحة ${_displayItemsFromMockApi[index]}',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -87,7 +127,9 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('تم النقر على زر الصفحة ${index + 1}'),
+                        content: Text(
+                          'تم النقر على زر الصفحة ${_displayItemsFromMockApi[index]}',
+                        ),
                         duration: Duration(seconds: 1),
                       ),
                     );
@@ -117,7 +159,7 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
                     return Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
+                        color: Colors.black.withValues(alpha: 0.7),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -138,14 +180,37 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _displayItemsFromMockApi.isEmpty
+          ? null
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    _controller.previousPage();
+                  },
+                  child: Icon(Icons.arrow_back_ios_new_rounded),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    _controller.nextPage();
+                  },
+                  child: Icon(Icons.arrow_forward_ios_rounded),
+                ),
+              ],
+            ),
       body: Center(
         child: TurnablePage(
-          key: GlobalKey(),
+          key: UniqueKey(),
           controller: _controller,
-          pageCount: _pageCount,
+          pageCount: _displayItemsFromMockApi.isEmpty
+              ? 1
+              : _displayItemsFromMockApi.length,
           pageViewMode: PageViewMode.single,
           paperBoundaryDecoration: PaperBoundaryDecoration.modern,
           settings: FlipSettings(
+            hideLeftShadow: true,
+            onlyVerticalPageFlip: true,
             drawShadow: true,
             flippingTime: 800,
             swipeDistance: 60.0,
@@ -153,11 +218,14 @@ class _AnimationTestPageState extends State<AnimationTestPage> {
             usePortrait: false,
           ),
           onPageChanged: (leftPageIndex, rightPageIndex) {
-            log('Page: $leftPageIndex, $rightPageIndex');
+            // log('Page: $leftPageIndex, $rightPageIndex');
             _currentPageNotifier.value = rightPageIndex;
             _flipCountNotifier.value = _flipCountNotifier.value + 1;
           },
           builder: (context, pageIndex, constraints) {
+            if (_displayItemsFromMockApi.isEmpty) {
+              return _buildLoadingPage();
+            }
             return _buildTestPage(pageIndex, constraints);
           },
         ),
