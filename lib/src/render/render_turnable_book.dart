@@ -81,6 +81,15 @@ class RenderTurnableBook extends RenderBox
     final rawMs = timestamp.inMilliseconds.toDouble();
     _updateTimestamp(rawMs);
     if (animation != null) {
+      if (animation!.startedAt == -1) {
+        animation = AnimationProcess(
+          frames: animation!.frames,
+          duration: animation!.duration,
+          durationFrame: animation!.durationFrame,
+          onAnimateEnd: animation!.onAnimateEnd,
+          startedAt: _timeMs,
+        );
+      }
       render(_timeMs);
     } else if (_hasActiveVisualElements) {
       markNeedsPaint();
@@ -92,6 +101,7 @@ class RenderTurnableBook extends RenderBox
 
   bool get _hasActiveVisualElements =>
       flippingPage != null || shadow != null || bottomPage != null;
+
   bool get _shouldContinueAnimating =>
       animation != null || _hasActiveVisualElements;
 
@@ -246,7 +256,7 @@ class RenderTurnableBook extends RenderBox
       duration: duration,
       durationFrame: duration / (frames.isEmpty ? 1 : frames.length),
       onAnimateEnd: onAnimateEnd,
-      startedAt: _timeMs,
+      startedAt: _timeMs > 0 ? -1 : 0,
     );
     _scheduleFrame();
   }
@@ -493,7 +503,7 @@ class RenderTurnableBook extends RenderBox
         isBottom: true,
       );
     }
-    if (settings.drawShadow) {
+    if (settings.drawShadow && !settings.hideLeftShadow) {
       _drawBookShadow(canvas, rect, offset);
     }
     if (flippingPage is BookPageImpl) {
@@ -787,14 +797,20 @@ class RenderTurnableBook extends RenderBox
     return true;
   }
 
+  Offset getPointerOffset({required PointerEvent event}) {
+    return settings.onlyVerticalPageFlip
+        ? Offset(event.localPosition.dx, size.height - 1)
+        : event.localPosition;
+  }
+
   @override
   void handleEvent(PointerEvent event, HitTestEntry entry) {
     if (event is PointerDownEvent) {
-      _handlePointerDown(event.localPosition);
+      _handlePointerDown(getPointerOffset(event: event));
     } else if (event is PointerMoveEvent) {
-      _handlePointerMove(event.localPosition);
+      _handlePointerMove(getPointerOffset(event: event));
     } else if (event is PointerUpEvent || event is PointerCancelEvent) {
-      _handlePointerUp(event.localPosition);
+      _handlePointerUp(getPointerOffset(event: event));
     }
   }
 

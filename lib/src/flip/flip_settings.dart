@@ -17,6 +17,9 @@ class FlipSettings {
   /// Whether to draw realistic shadow effects during page flips
   final bool drawShadow;
 
+  /// Whether to hide permanent left shadow
+  final bool hideLeftShadow;
+
   /// Duration of flip animation in milliseconds
   final int flippingTime;
 
@@ -52,6 +55,9 @@ class FlipSettings {
 
   /// Enable inertia so a fast swipe finishes even before crossing center
   final bool enableInertia;
+
+  /// Enable only vertical Page Flip, no corner turns
+  final bool onlyVerticalPageFlip;
 
   /// Velocity threshold (logical px/second) to treat release as a swipe
   final double inertiaVelocityThreshold;
@@ -115,6 +121,8 @@ class FlipSettings {
     this.inertiaProgressBoost = 0.15,
     this.sagAmplitude = 0.08,
     this.bendStrength = 0.6,
+    this.onlyVerticalPageFlip = false,
+    this.hideLeftShadow = false,
   });
 
   FlipSettings copyWith({
@@ -140,6 +148,8 @@ class FlipSettings {
     double? inertiaProgressBoost,
     double? sagAmplitude,
     double? bendStrength,
+    bool? onlyVerticalPageFlip,
+    bool? hideLeftShadow,
   }) {
     return FlipSettings(
       startPageIndex: startPage ?? startPageIndex,
@@ -165,6 +175,8 @@ class FlipSettings {
       inertiaProgressBoost: inertiaProgressBoost ?? this.inertiaProgressBoost,
       sagAmplitude: sagAmplitude ?? this.sagAmplitude,
       bendStrength: bendStrength ?? this.bendStrength,
+      hideLeftShadow: hideLeftShadow ?? this.hideLeftShadow,
+      onlyVerticalPageFlip: onlyVerticalPageFlip ?? this.onlyVerticalPageFlip,
     );
   }
 }
