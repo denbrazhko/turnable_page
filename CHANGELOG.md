@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.1 - 2025-09-30
+### ✨ New Features
+- **FlipSettings Controls**: Added `hideLeftShadow` to individually disable the left page shadow in single-page mode.
+- **Vertical Flip Mode**: Introduced `onlyVerticalPageFlip` to support vertical-only page flipping by clamping gestures to the bottom edge.
+
+### 🐞 Bug Fixes
+- **Page Navigation**: Fixed `nextPage`/`previousPage` not working after the first page by resetting navigation state with a fresh key and animation timing.
+- **Animation Lifecycle**: Ensured flip animations restart correctly by initializing `startedAt` whenever a new flip begins.
+
+### 🚀 Enhancements
+- **Example App UX**: Revamped the example to load pages asynchronously, show a loading indicator, and expose floating navigation buttons once data arrives.
+
+### 🧹 Chores
+- **Tooling**: Added `.fvmrc` to pin the Flutter version used for development.
+
 ## 1.0.0 - 2025-08-17
 ### 🔄 MAJOR ARCHITECTURE OVERHAUL
 **BREAKING CHANGES:**

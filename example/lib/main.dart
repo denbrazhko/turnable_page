@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:turnable_page/turnable_page.dart';
 
@@ -32,7 +31,6 @@ class _AnimationTestPage extends StatefulWidget {
 
 class _AnimationTestPageState extends State<_AnimationTestPage> {
   late PageFlipController _controller;
-  Timer? _timer;
   final List<String> _displayItemsFromMockApi = [];
 
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
@@ -42,31 +40,23 @@ class _AnimationTestPageState extends State<_AnimationTestPage> {
   void initState() {
     super.initState();
     _controller = PageFlipController();
-    _timer = Timer(Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _displayItemsFromMockApi.addAll([
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-          ]);
-        });
-      }
-    });
+    _displayItemsFromMockApi.addAll([
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+    ]);
+
   }
 
   @override
   void dispose() {
     _currentPageNotifier.dispose();
     _flipCountNotifier.dispose();
-    if (_timer?.isActive == true) {
-      _timer?.cancel();
-    }
     super.dispose();
   }
 
