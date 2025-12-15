@@ -75,17 +75,11 @@ class _TurnablePageViewState extends State<TurnablePageView> {
 
   @override
   Widget build(BuildContext context) {
-    return PaperWidget(
-      size: widget.bookSize,
-      isSinglePage: widget.settings.usePortrait,
-      paperBoundaryDecoration: widget.paperBoundaryDecoration,
-      isEnabled: widget.pagesBoundaryIsEnabled,
-      child: TurnableBookRenderObjectWidget(
-        pageCount: widget.pageCount,
-        builder: (ctx, index) => widget.builder(ctx, index),
-        settings: _settings,
-        pageFlip: _pageFlip,
-      ),
+    return TurnableBookRenderObjectWidget(
+      pageCount: widget.pageCount,
+      builder: (ctx, index) => widget.builder(ctx, index),
+      settings: _settings,
+      pageFlip: _pageFlip,
     );
   }
 }
