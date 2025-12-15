@@ -17,6 +17,7 @@ class TurnablePage extends StatelessWidget {
   final PaperBoundaryDecoration paperBoundaryDecoration;
   final double? aspectRatio;
   final bool pagesBoundaryIsEnabled;
+  final bool usePortrait;
 
   TurnablePage({
     super.key,
@@ -27,6 +28,7 @@ class TurnablePage extends StatelessWidget {
     this.onPageChanged,
     this.pageViewMode = PageViewMode.single,
     this.autoResponseSize = true,
+    this.usePortrait = true,
     this.paperBoundaryDecoration = PaperBoundaryDecoration.vintage,
     FlipSettings? settings,
     this.pagesBoundaryIsEnabled = true,
@@ -67,18 +69,19 @@ class TurnablePage extends StatelessWidget {
   }
 
   FlipSettings _getAdjustedSetting(bool isMobile) {
-    if (!autoResponseSize && pageViewMode == PageViewMode.single) {
-      return settings.copyWith(usePortrait: true);
-    }
-    final usePortrait = pageViewMode == PageViewMode.single && isMobile;
     return settings.copyWith(usePortrait: usePortrait);
+    // if (!autoResponseSize && pageViewMode == PageViewMode.single) {
+    //   return settings.copyWith(usePortrait: true);
+    // }
+    // final usePortrait = pageViewMode == PageViewMode.single && isMobile;
+    // return settings.copyWith(usePortrait: usePortrait);
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 600;
+        final isMobile = true;
         final aspectRatio = _getAspectRatio(isMobile);
         FlipSettings adjustedSettings = _getAdjustedSetting(isMobile);
 
