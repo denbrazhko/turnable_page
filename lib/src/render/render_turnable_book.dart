@@ -30,7 +30,11 @@ class RenderTurnableBook extends RenderBox
   static const int _swipeTimeout = 250;
   static const double _minMoveThreshold = 10.0;
   bool get _needsWhitePage {
-    if (settings.usePortrait) return false;
+    final orientation = _orientation ??
+        (settings.usePortrait
+            ? BookOrientation.portrait
+            : BookOrientation.landscape);
+    if (orientation == BookOrientation.portrait) return false;
     return settings.showCover ? false : childCount % 2 == 1;
   }
 
@@ -275,17 +279,24 @@ class RenderTurnableBook extends RenderBox
 
   @override
   BookOrientation calculateBoundsRect() {
-    BookOrientation orientation = BookOrientation.landscape;
+    BookOrientation orientation =
+        settings.usePortrait ? BookOrientation.portrait : BookOrientation.landscape;
     final blockWidth = size.width;
     final middlePoint = model.Point(blockWidth / 2, size.height / 2);
     final ratio = settings.width / settings.height;
     double pageWidth = settings.width;
     double pageHeight = settings.height;
-    double left = middlePoint.x - pageWidth;
-    if (settings.size == SizeType.stretch) {
-      if (blockWidth < settings.width * 2 && settings.usePortrait) {
+
+    // Fallback to portrait when landscape doesn't fit the available width
+    if (!settings.usePortrait) {
+      final minSpreadWidth =
+          settings.size == SizeType.stretch ? settings.width * 2 : pageWidth * 2;
+      if (blockWidth < minSpreadWidth) {
         orientation = BookOrientation.portrait;
       }
+    }
+
+    if (settings.size == SizeType.stretch) {
       pageWidth = orientation == BookOrientation.portrait
           ? blockWidth
           : blockWidth / 2;
@@ -295,17 +306,11 @@ class RenderTurnableBook extends RenderBox
         pageHeight = size.height;
         pageWidth = pageHeight * ratio;
       }
-      left = orientation == BookOrientation.portrait
-          ? middlePoint.x - pageWidth / 2 - pageWidth
-          : middlePoint.x - pageWidth;
-    } else {
-      if (blockWidth < pageWidth * 2) {
-        if (settings.usePortrait) {
-          orientation = BookOrientation.portrait;
-          left = middlePoint.x - pageWidth / 2 - pageWidth;
-        }
-      }
     }
+
+    final left = orientation == BookOrientation.portrait
+        ? middlePoint.x - pageWidth / 2 - pageWidth
+        : middlePoint.x - pageWidth;
     _boundsRect = PageRect(
       left: left,
       top: middlePoint.y - pageHeight / 2,
