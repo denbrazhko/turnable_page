@@ -237,9 +237,23 @@ class RenderTurnableBook extends RenderBox
       double elapsed = _timeMs - animation!.startedAt;
       if (elapsed < 0) elapsed = 0;
       final frameIndex = (elapsed / animation!.durationFrame).floor();
-      if (frameIndex < animation!.frames.length) {
-        animation!.frames[frameIndex]();
-      } else {
+      final frames = animation!.frames;
+      if (frames.isEmpty) {
+        animation!.onAnimateEnd();
+        pageFlip.trigger('animationComplete', pageFlip, null);
+        animation = null;
+        markNeedsPaint();
+        return;
+      }
+
+      // Avoid 1-frame "flash" of the previous static spread at the end:
+      // previously we waited for `elapsed >= duration` to call `onAnimateEnd()`,
+      // so the last calculated frame could be painted while the collection still
+      // pointed to the previous page(s).
+      final lastFrameIndex = frames.length - 1;
+      final idx = frameIndex.clamp(0, lastFrameIndex);
+      frames[idx]();
+      if (idx == lastFrameIndex) {
         animation!.onAnimateEnd();
         pageFlip.trigger('animationComplete', pageFlip, null);
         animation = null;
